@@ -1,0 +1,384 @@
+/* StatsDisplay Component Styles */
+.stats-display {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+}
+
+.stats-title {
+  text-align: center;
+  color: #495057;
+  margin-bottom: 2rem;
+  font-size: 1.75rem;
+  font-weight: 600;
+}
+
+/* Statistics Table */
+.stats-table-container {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  margin-bottom: 2rem;
+}
+
+.stats-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+
+.stats-table thead {
+  background: linear-gradient(135deg, #007bff, #0056b3);
+  color: white;
+}
+
+.stats-table th {
+  padding: 1rem;
+  text-align: left;
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.stats-table th:last-child {
+  text-align: right;
+}
+
+.stats-row {
+  border-bottom: 1px solid #e9ecef;
+  transition: background-color 0.2s ease;
+}
+
+.stats-row:hover {
+  background-color: #f8f9fa;
+}
+
+.stats-row:last-child {
+  border-bottom: none;
+}
+
+.stats-table td {
+  padding: 1rem;
+  vertical-align: middle;
+}
+
+.category-name {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  color: #495057;
+}
+
+.category-icon {
+  font-size: 1.2rem;
+}
+
+.problem-count {
+  font-weight: 600;
+  color: #6c757d;
+  text-align: center;
+}
+
+.calculation {
+  font-family: 'Courier New', monospace;
+  color: #495057;
+  text-align: center;
+  font-size: 0.9rem;
+}
+
+.points {
+  font-weight: 700;
+  color: #28a745;
+  text-align: right;
+  font-size: 1.1rem;
+}
+
+/* Code Tutor special styling (0 points) */
+.code-tutor-row {
+  opacity: 0.7;
+}
+
+.code-tutor-row .points {
+  color: #6c757d;
+}
+
+.no-points-note {
+  display: block;
+  font-size: 0.75rem;
+  color: #6c757d;
+  font-style: italic;
+  margin-top: 0.2rem;
+}
+
+/* Total Points Section */
+.total-points-section {
+  margin: 2rem 0;
+}
+
+.total-points-card {
+  background: linear-gradient(135deg, #28a745, #20c997);
+  color: white;
+  padding: 2rem;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 6px 12px rgba(40, 167, 69, 0.3);
+}
+
+.total-label {
+  font-size: 1.2rem;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  opacity: 0.9;
+}
+
+.total-points {
+  font-size: 3rem;
+  font-weight: 800;
+  margin-bottom: 1rem;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.points-breakdown {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  font-size: 0.9rem;
+  opacity: 0.9;
+}
+
+.points-breakdown span {
+  background: rgba(255, 255, 255, 0.2);
+  padding: 0.3rem 0.6rem;
+  border-radius: 20px;
+  font-weight: 500;
+}
+
+/* Zero Stats Message */
+.zero-stats-message {
+  background: #fff3cd;
+  border: 1px solid #ffeaa7;
+  color: #856404;
+  padding: 1.5rem;
+  border-radius: 8px;
+  text-align: center;
+  margin: 2rem 0;
+}
+
+.zero-stats-message p {
+  margin: 0.5rem 0;
+}
+
+/* Achievement Highlights */
+.achievement-highlights {
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-top: 2rem;
+}
+
+.achievement-highlights h4 {
+  color: #495057;
+  margin-bottom: 1rem;
+  text-align: center;
+  font-size: 1.1rem;
+}
+
+.highlight-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 1rem;
+}
+
+.highlight-item {
+  text-align: center;
+  padding: 1rem;
+  background: white;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+}
+
+.highlight-number {
+  display: block;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #007bff;
+  margin-bottom: 0.3rem;
+}
+
+.highlight-label {
+  font-size: 0.8rem;
+  color: #6c757d;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+}
+
+/* Enhanced Mobile Responsiveness */
+@media (max-width: 768px) {
+  .stats-display {
+    padding: 0 0.25rem;
+    margin: 1rem auto;
+  }
+  
+  .stats-title {
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .stats-table {
+    font-size: 0.85rem;
+  }
+  
+  .stats-table th,
+  .stats-table td {
+    padding: 0.75rem 0.4rem;
+  }
+  
+  .stats-table th {
+    font-size: 0.8rem;
+  }
+  
+  .category-name {
+    flex-direction: column;
+    gap: 0.2rem;
+    text-align: center;
+    font-size: 0.85rem;
+  }
+  
+  .category-icon {
+    font-size: 1rem;
+  }
+  
+  .calculation {
+    font-size: 0.75rem;
+    line-height: 1.3;
+  }
+  
+  .problem-count {
+    font-size: 0.9rem;
+  }
+  
+  .points {
+    font-size: 1rem;
+  }
+  
+  .total-points {
+    font-size: 2.2rem;
+  }
+  
+  .total-points-card {
+    padding: 1.5rem 1rem;
+  }
+  
+  .points-breakdown {
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+  
+  .points-breakdown span {
+    font-size: 0.8rem;
+    padding: 0.25rem 0.5rem;
+  }
+  
+  .highlight-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
+  }
+  
+  .highlight-item {
+    padding: 0.75rem;
+  }
+  
+  .highlight-number {
+    font-size: 1.25rem;
+  }
+  
+  .highlight-label {
+    font-size: 0.7rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .stats-display {
+    margin: 0.5rem auto;
+  }
+  
+  .stats-title {
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+  }
+  
+  /* Mobile-first table approach */
+  .stats-table-container {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  .stats-table {
+    min-width: 480px;
+    font-size: 0.8rem;
+  }
+  
+  .stats-table th,
+  .stats-table td {
+    padding: 0.6rem 0.3rem;
+  }
+  
+  .category-name {
+    font-size: 0.8rem;
+  }
+  
+  .calculation {
+    font-size: 0.7rem;
+  }
+  
+  .total-points-card {
+    padding: 1.25rem 0.75rem;
+  }
+  
+  .total-label {
+    font-size: 1rem;
+  }
+  
+  .total-points {
+    font-size: 1.8rem;
+  }
+  
+  .points-breakdown span {
+    font-size: 0.75rem;
+  }
+  
+  .highlight-grid {
+    grid-template-columns: 1fr;
+    gap: 0.4rem;
+  }
+  
+  .highlight-item {
+    padding: 0.6rem;
+  }
+  
+  .highlight-number {
+    font-size: 1.1rem;
+  }
+}
+
+/* Touch-friendly enhancements */
+@media (hover: none) and (pointer: coarse) {
+  .stats-row:hover {
+    background-color: transparent;
+  }
+  
+  .stats-row:active {
+    background-color: #f8f9fa;
+  }
+  
+  /* Improve scrolling experience on mobile */
+  .stats-table-container {
+    scroll-behavior: smooth;
+  }
+}
