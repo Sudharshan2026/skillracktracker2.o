@@ -76,6 +76,8 @@ const ProfileInput: React.FC<ProfileInputProps> = ({ onSubmit, loading }) => {
 
   return (
     <div className="profile-input">
+      {/* Step-by-step instructions - Requirements 7.1, 7.2, 7.3 */}
+
       {/* URL input form - Requirements 4.1, 7.4 */}
       <form onSubmit={handleSubmit} className="url-form">
         <div className="input-group">

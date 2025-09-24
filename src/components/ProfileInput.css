@@ -1,6 +1,8 @@
 /* ProfileInput Component Styles - Minimalist Design */
 .profile-input {
-  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: var(--space-xl);
 }
 
 /* Instructions Section */

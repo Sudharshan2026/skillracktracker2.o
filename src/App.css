@@ -91,8 +91,12 @@ body {
 /* Main App Layout */
 .app {
   min-height: 100vh;
-  background-color: var(--bg-primary);
+  display: flex;
+  flex-direction: column;
+  max-width: 1200px;
+  margin: 0 auto;
   padding: var(--space-md);
+  background-color: var(--bg-primary);
 }
 
 /* Theme Toggle Button */
@@ -126,7 +130,7 @@ body {
 .app-header {
   text-align: center;
   margin-bottom: var(--space-xl);
-  padding: var(--space-lg) var(--space-md);
+  padding: var(--space-lg) 0;
   border-bottom: 1px solid var(--border-light);
 }
 
