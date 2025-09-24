@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import type { ProfileStats, GoalCalculation, ApiResponse } from './types';
-import { HomePage, ResultsPage } from './components';
+import { HomePage, ResultsPage, ThemeToggle } from './components';
 import { useNavigation } from './hooks/useNavigation';
 import './App.css';
 
@@ -147,6 +147,9 @@ function App() {
   // Render appropriate page based on navigation state - Requirements 8.1, 8.2, 8.6
   return (
     <div className="app">
+      {/* Theme Toggle - Available on all pages */}
+      <ThemeToggle />
+      
       {navigation.currentPage === 'home' && (
         <HomePage
           onAnalyze={handleProfileSubmit}
