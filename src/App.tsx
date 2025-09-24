@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import type { ProfileStats, GoalCalculation, ApiResponse } from './types';
+import type { SkillRackProfile, GoalCalculation, ApiResponse } from './types';
 import { HomePage, ResultsPage, ThemeToggle } from './components';
 import { useNavigation } from './hooks/useNavigation';
 import './App.css';
@@ -13,7 +13,7 @@ function App() {
   const navigation = useNavigation();
   
   // Application state - Requirement 3.2: No data persistence
-  const [profileData, setProfileData] = useState<ProfileStats | null>(null);
+  const [profileData, setProfileData] = useState<SkillRackProfile | null>(null);
   const [goalResults, setGoalResults] = useState<GoalCalculation | null>(null);
 
   /**
@@ -77,7 +77,7 @@ function App() {
       return;
     }
 
-    const currentPoints = profileData.totalPoints;
+    const currentPoints = profileData.stats.totalPoints;
     const requiredPoints = Math.max(0, targetPoints - currentPoints);
 
     // Calculate achievement path suggestions

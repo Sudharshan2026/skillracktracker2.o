@@ -1,4 +1,4 @@
-import type { ProfileStats, GoalCalculation } from './index';
+import type { GoalCalculation, SkillRackProfile } from './index';
 
 /**
  * Props for the ProfileInput component
@@ -15,8 +15,8 @@ export interface ProfileInputProps {
  * Props for the StatsDisplay component
  */
 export interface StatsDisplayProps {
-  /** Parsed profile statistics to display */
-  profileData: ProfileStats;
+  /** Parsed profile data to display */
+  profileData: SkillRackProfile;
 }
 
 /**

@@ -12,12 +12,13 @@ const StatsDisplay: React.FC<StatsDisplayProps> = ({ profileData }) => {
    * Requirements 6.1-6.6: Accurate point calculations
    */
   const calculateCategoryPoints = () => {
+    const { stats } = profileData;
     return {
-      codeTrack: profileData.codeTrack * 2,      // 2 points each - Requirement 6.1
-      codeTutor: profileData.codeTutor * 0,      // 0 points each - Requirement 6.2
-      dailyTest: profileData.dailyTest * 20,     // 20 points each - Requirement 6.3
-      dailyChallenge: profileData.dailyChallenge * 2, // 2 points each - Requirement 6.4
-      codeTest: profileData.codeTest * 30,       // 30 points each - Requirement 6.5
+      codeTrack: stats.codeTrack * 2,      // 2 points each - Requirement 6.1
+      codeTutor: stats.codeTutor * 0,      // 0 points each - Requirement 6.2
+      dailyTest: stats.dailyTest * 20,     // 20 points each - Requirement 6.3
+      dailyChallenge: stats.dailyChallenge * 2, // 2 points each - Requirement 6.4
+      codeTest: stats.codeTest * 30,       // 30 points each - Requirement 6.5
     };
   };
 
@@ -39,6 +40,69 @@ const StatsDisplay: React.FC<StatsDisplayProps> = ({ profileData }) => {
     <div className="stats-display">
       <h2 className="stats-title">Your SkillRack Statistics</h2>
       
+      {/* Profile Information Section */}
+      <div className="profile-info">
+        <div className="profile-header">
+          {profileData.profileImage && (
+            <img 
+              src={profileData.profileImage} 
+              alt="Profile" 
+              className="profile-image"
+            />
+          )}
+          <div className="profile-details">
+            <h3 className="profile-name">{profileData.name}</h3>
+            <div className="profile-id">ID: {profileData.id}</div>
+            <div className="profile-education">
+              <span className="department">{profileData.department}</span>
+              {profileData.college && (
+                <>
+                  <span className="divider">•</span>
+                  <span className="college">{profileData.college}</span>
+                </>
+              )}
+              {profileData.year && (
+                <>
+                  <span className="divider">•</span>
+                  <span className="year">{profileData.year}</span>
+                </>
+              )}
+            </div>
+            {profileData.gender && (
+              <div className="profile-gender">{profileData.gender}</div>
+            )}
+          </div>
+        </div>
+        
+        {/* Additional Stats */}
+        <div className="additional-stats">
+          <div className="stat-item">
+            <span className="stat-label">Rank:</span>
+            <span className="stat-value">{formatCount(profileData.stats.rank)}</span>
+          </div>
+          <div className="stat-item">
+            <span className="stat-label">Level:</span>
+            <span className="stat-value">{formatCount(profileData.stats.level)}</span>
+          </div>
+          <div className="stat-item">
+            <span className="stat-label">🥇:</span>
+            <span className="stat-value">{formatCount(profileData.stats.gold)}</span>
+          </div>
+          <div className="stat-item">
+            <span className="stat-label">🥈:</span>
+            <span className="stat-value">{formatCount(profileData.stats.silver)}</span>
+          </div>
+          <div className="stat-item">
+            <span className="stat-label">🥉:</span>
+            <span className="stat-value">{formatCount(profileData.stats.bronze)}</span>
+          </div>
+          <div className="stat-item">
+            <span className="stat-label">Total Problems:</span>
+            <span className="stat-value">{formatCount(profileData.stats.programsSolved)}</span>
+          </div>
+        </div>
+      </div>
+      
       {/* Statistics Table - Requirements 1.2, 4.2 */}
       <div className="stats-table-container">
         <table className="stats-table">
@@ -58,10 +122,10 @@ const StatsDisplay: React.FC<StatsDisplayProps> = ({ profileData }) => {
                 Code Track
               </td>
               <td className="problem-count">
-                {formatCount(profileData.codeTrack)}
+                {formatCount(profileData.stats.codeTrack)}
               </td>
               <td className="calculation">
-                {formatCount(profileData.codeTrack)} × 2 = {formatPoints(categoryPoints.codeTrack)}
+                {formatCount(profileData.stats.codeTrack)} × 2 = {formatPoints(categoryPoints.codeTrack)}
               </td>
               <td className="points">
                 {formatPoints(categoryPoints.codeTrack)}
@@ -75,10 +139,10 @@ const StatsDisplay: React.FC<StatsDisplayProps> = ({ profileData }) => {
                 Code Test
               </td>
               <td className="problem-count">
-                {formatCount(profileData.codeTest)}
+                {formatCount(profileData.stats.codeTest)}
               </td>
               <td className="calculation">
-                {formatCount(profileData.codeTest)} × 30 = {formatPoints(categoryPoints.codeTest)}
+                {formatCount(profileData.stats.codeTest)} × 30 = {formatPoints(categoryPoints.codeTest)}
               </td>
               <td className="points">
                 {formatPoints(categoryPoints.codeTest)}
@@ -92,10 +156,10 @@ const StatsDisplay: React.FC<StatsDisplayProps> = ({ profileData }) => {
                 Daily Test
               </td>
               <td className="problem-count">
-                {formatCount(profileData.dailyTest)}
+                {formatCount(profileData.stats.dailyTest)}
               </td>
               <td className="calculation">
-                {formatCount(profileData.dailyTest)} × 20 = {formatPoints(categoryPoints.dailyTest)}
+                {formatCount(profileData.stats.dailyTest)} × 20 = {formatPoints(categoryPoints.dailyTest)}
               </td>
               <td className="points">
                 {formatPoints(categoryPoints.dailyTest)}
@@ -109,10 +173,10 @@ const StatsDisplay: React.FC<StatsDisplayProps> = ({ profileData }) => {
                 Daily Challenge
               </td>
               <td className="problem-count">
-                {formatCount(profileData.dailyChallenge)}
+                {formatCount(profileData.stats.dailyChallenge)}
               </td>
               <td className="calculation">
-                {formatCount(profileData.dailyChallenge)} × 2 = {formatPoints(categoryPoints.dailyChallenge)}
+                {formatCount(profileData.stats.dailyChallenge)} × 2 = {formatPoints(categoryPoints.dailyChallenge)}
               </td>
               <td className="points">
                 {formatPoints(categoryPoints.dailyChallenge)}
@@ -126,10 +190,10 @@ const StatsDisplay: React.FC<StatsDisplayProps> = ({ profileData }) => {
                 Code Tutor
               </td>
               <td className="problem-count">
-                {formatCount(profileData.codeTutor)}
+                {formatCount(profileData.stats.codeTutor)}
               </td>
               <td className="calculation">
-                {formatCount(profileData.codeTutor)} × 0 = 0
+                {formatCount(profileData.stats.codeTutor)} × 0 = 0
                 <span className="no-points-note">(No points)</span>
               </td>
               <td className="points">
@@ -145,7 +209,7 @@ const StatsDisplay: React.FC<StatsDisplayProps> = ({ profileData }) => {
         <div className="total-points-card">
           <h3 className="total-label">Total Points</h3>
           <div className="total-points">
-            {formatPoints(profileData.totalPoints)}
+            {formatPoints(profileData.stats.totalPoints)}
           </div>
           <div className="points-breakdown">
             <span>Code Track: {formatPoints(categoryPoints.codeTrack)}</span>
@@ -157,7 +221,7 @@ const StatsDisplay: React.FC<StatsDisplayProps> = ({ profileData }) => {
       </div>
 
       {/* Zero Values Message - Requirement 1.3 */}
-      {profileData.totalPoints === 0 && (
+      {profileData.stats.totalPoints === 0 && (
         <div className="zero-stats-message">
           <p>
             <strong>No points found in your profile.</strong>
@@ -168,17 +232,57 @@ const StatsDisplay: React.FC<StatsDisplayProps> = ({ profileData }) => {
         </div>
       )}
 
+      {/* Programming Languages Section */}
+      {Object.keys(profileData.languages).length > 0 && (
+        <div className="languages-section">
+          <h4>Programming Languages</h4>
+          <div className="languages-grid">
+            {Object.entries(profileData.languages).map(([language, count]) => (
+              <div key={language} className="language-item">
+                <span className="language-name">{language}</span>
+                <span className="language-count">{formatCount(count)}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Certificates Section */}
+      {profileData.certificates.length > 0 && (
+        <div className="certificates-section">
+          <h4>Certificates ({profileData.certificates.length})</h4>
+          <div className="certificates-list">
+            {profileData.certificates.map((cert, index) => (
+              <div key={index} className="certificate-item">
+                <div className="certificate-title">{cert.title}</div>
+                {cert.date && <div className="certificate-date">{cert.date}</div>}
+                {cert.link && (
+                  <a 
+                    href={cert.link} 
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                    className="certificate-link"
+                  >
+                    View Certificate
+                  </a>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Achievement Highlights */}
-      {profileData.totalPoints > 0 && (
+      {profileData.stats.totalPoints > 0 && (
         <div className="achievement-highlights">
           <h4>Quick Stats</h4>
           <div className="highlight-grid">
             <div className="highlight-item">
-              <span className="highlight-number">{formatCount(profileData.codeTrack + profileData.codeTest + profileData.dailyTest + profileData.dailyChallenge)}</span>
+              <span className="highlight-number">{formatCount(profileData.stats.codeTrack + profileData.stats.codeTest + profileData.stats.dailyTest + profileData.stats.dailyChallenge)}</span>
               <span className="highlight-label">Total Problems</span>
             </div>
             <div className="highlight-item">
-              <span className="highlight-number">{formatCount(Math.max(profileData.codeTrack, profileData.codeTest, profileData.dailyTest, profileData.dailyChallenge))}</span>
+              <span className="highlight-number">{formatCount(Math.max(profileData.stats.codeTrack, profileData.stats.codeTest, profileData.stats.dailyTest, profileData.stats.dailyChallenge))}</span>
               <span className="highlight-label">Best Category</span>
             </div>
             <div className="highlight-item">

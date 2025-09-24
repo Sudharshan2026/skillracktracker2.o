@@ -1,13 +1,13 @@
 import { StatsDisplay, GoalCalculator, ResultsDisplay } from './index';
-import type { ProfileStats, GoalCalculation } from '../types';
+import type { SkillRackProfile, GoalCalculation } from '../types';
 import './ResultsPage.css';
 
 /**
  * Props for the ResultsPage component
  */
 export interface ResultsPageProps {
-  /** Parsed profile statistics to display */
-  profileData: ProfileStats;
+  /** Parsed profile data to display */
+  profileData: SkillRackProfile;
   
   /** The profile URL that was analyzed */
   analyzedUrl: string;
@@ -83,7 +83,7 @@ export function ResultsPage({
             </div>
             <div className="goal-card">
               <GoalCalculator 
-                currentPoints={profileData.totalPoints}
+                currentPoints={profileData.stats.totalPoints}
                 onCalculate={onCalculateGoal}
               />
             </div>
