@@ -19,9 +19,6 @@ export function ResultsHeader({ analyzedUrl, onGoHome, showPlan = false, onLogou
 
   const [active, setActive] = React.useState<string>('#stats');
 
-  // Keep the analyzedUrl for potential future use
-  console.log('Current analyzed URL:', analyzedUrl);
-
   React.useEffect(() => {
     const sectionIds = ['#stats', '#goals'].concat(showPlan ? ['#plan'] : []);
     const sections = sectionIds
@@ -47,7 +44,7 @@ export function ResultsHeader({ analyzedUrl, onGoHome, showPlan = false, onLogou
   }, [showPlan]);
 
   return (
-    <header className="sticky top-4 z-50 w-full">
+    <header className="sticky top-4 z-50 w-full" data-testid="results-header">
       <div className="mx-auto flex w-full max-w-5xl items-center justify-between rounded-lg border bg-background/90 px-4 py-3 shadow backdrop-blur supports-[backdrop-filter]:bg-background/80">
         {/* Left: Brand/Back */}
         <div className="flex items-center shrink-0">

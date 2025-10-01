@@ -121,7 +121,6 @@ body {
   max-width: 1200px;
   margin: 0 auto;
   padding: var(--space-md);
-  padding-top: calc(var(--space-md) + 1rem); /* Extra top padding for floating header */
   background-color: var(--bg-primary);
 }
 

@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import type { SkillRackProfile, GoalCalculation, ApiResponse } from './types';
-import { HomePage, ResultsPage, FloatingHeader } from './components';
+import { HomePage, ResultsPage} from './components';
 import { useNavigation } from './hooks/useNavigation';
 import './App.css';
 
@@ -147,28 +147,7 @@ function App() {
   // Render appropriate page based on navigation state - Requirements 8.1, 8.2, 8.6
   return (
     <div className="app">
-      {/* Floating Header - Available on all pages */}
-      <FloatingHeader 
-        onNavigateHome={handleReset}
-        onNavigateToTracker={() => {
-          if (profileData && navigation.analyzedUrl) {
-            navigation.navigateToResults(navigation.analyzedUrl, profileData);
-          }
-        }}
-        onNavigateToGoals={() => {
-          if (profileData && navigation.analyzedUrl) {
-            navigation.navigateToResults(navigation.analyzedUrl, profileData);
-            // Scroll to goals section after navigation
-            setTimeout(() => {
-              const goalsElement = document.querySelector('#goals');
-              if (goalsElement) {
-                goalsElement.scrollIntoView({ behavior: 'smooth' });
-              }
-            }, 100);
-          }
-        }}
-        currentPage={navigation.currentPage}
-      />
+      {/* Theme Toggle - Available on all pages */}
       
       {navigation.currentPage === 'home' && (
         <HomePage
