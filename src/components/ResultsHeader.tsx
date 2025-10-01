@@ -19,6 +19,9 @@ export function ResultsHeader({ analyzedUrl, onGoHome, showPlan = false, onLogou
 
   const [active, setActive] = React.useState<string>('#stats');
 
+  // Keep the analyzedUrl for potential future use
+  console.log('Current analyzed URL:', analyzedUrl);
+
   React.useEffect(() => {
     const sectionIds = ['#stats', '#goals'].concat(showPlan ? ['#plan'] : []);
     const sections = sectionIds
@@ -54,7 +57,7 @@ export function ResultsHeader({ analyzedUrl, onGoHome, showPlan = false, onLogou
         </div>
 
         {/* Center: Section links (always visible, scrollable on small screens) */}
-        <nav className="flex items-center space-x-8 overflow-x-auto mx-4">
+        <nav className="flex items-center gap-x-2 overflow-x-auto mx-4">
           {links.map((link) => (
             <a
               key={link.href}

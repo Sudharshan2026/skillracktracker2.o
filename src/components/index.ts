@@ -13,6 +13,7 @@ export { default as ThemeToggle } from './ThemeToggle';
 export { HomePage } from './HomePage';
 export { ResultsPage } from './ResultsPage';
 
-// Sheet component
-export * from './sheet';
-export * from './floating-header';
+// UI components
+export { FloatingHeader } from './ui/floating-header';
+export * from './ui/sheet';
+export * from './ui/button';
