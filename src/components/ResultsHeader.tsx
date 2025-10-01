@@ -45,22 +45,23 @@ export function ResultsHeader({ analyzedUrl, onGoHome, showPlan = false, onLogou
 
   return (
     <header className="sticky top-4 z-50 w-full">
-      <div className="mx-auto flex w-full max-w-5xl items-center justify-between rounded-lg border bg-background/90 px-3 py-2 shadow backdrop-blur supports-[backdrop-filter]:bg-background/80">
+      <div className="mx-auto flex w-full max-w-5xl items-center justify-between rounded-lg border bg-background/90 px-4 py-3 shadow backdrop-blur supports-[backdrop-filter]:bg-background/80">
         {/* Left: Brand/Back */}
-        <div className="min-w-[9rem] flex items-center">
+        <div className="flex items-center shrink-0">
           <Button variant="outline" size="sm" onClick={onGoHome}>
             SkillRack Tracker
           </Button>
         </div>
 
         {/* Center: Section links (always visible, scrollable on small screens) */}
-        <nav className="flex items-center gap-4 overflow-x-auto">
+        <nav className="flex items-center space-x-8 overflow-x-auto mx-4">
           {links.map((link) => (
             <a
               key={link.href}
               className={cn(
                 buttonVariants({ variant: 'ghost', size: 'sm' }),
-                active === link.href && 'bg-accent text-accent-foreground'
+                active === link.href && 'bg-accent text-accent-foreground',
+                'px-6 whitespace-nowrap'
               )}
               href={link.href}
             >
@@ -70,7 +71,7 @@ export function ResultsHeader({ analyzedUrl, onGoHome, showPlan = false, onLogou
         </nav>
 
         {/* Right: Logout */}
-        <div className="min-w-[9rem] flex items-center justify-end gap-2">
+        <div className="flex items-center justify-end gap-3 shrink-0">
           <ThemeToggle />
           <button
             className={buttonVariants({ variant: 'ghost', size: 'sm' })}

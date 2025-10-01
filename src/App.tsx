@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import type { SkillRackProfile, GoalCalculation, ApiResponse } from './types';
-import { HomePage, ResultsPage, ThemeToggle } from './components';
+import { HomePage, ResultsPage} from './components';
 import { useNavigation } from './hooks/useNavigation';
 import './App.css';
 
@@ -148,7 +148,6 @@ function App() {
   return (
     <div className="app">
       {/* Theme Toggle - Available on all pages */}
-      <ThemeToggle />
       
       {navigation.currentPage === 'home' && (
         <HomePage

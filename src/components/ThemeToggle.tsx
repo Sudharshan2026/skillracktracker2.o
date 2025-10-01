@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { buttonVariants } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 
 /**
  * ThemeToggle component for switching between light and dark themes
@@ -29,12 +31,15 @@ const ThemeToggle: React.FC = () => {
 
   return (
     <button 
-      className="theme-toggle"
+      className={cn(
+        buttonVariants({ variant: 'ghost', size: 'sm' }),
+        'gap-1'
+      )}
       onClick={toggleTheme}
       aria-label={`Switch to ${isDark ? 'light' : 'dark'} theme`}
       type="button"
     >
-      <span className="theme-toggle-icon">
+      <span className="text-sm">
         {isDark ? '☀️' : '🌙'}
       </span>
       {isDark ? 'Light' : 'Dark'}
