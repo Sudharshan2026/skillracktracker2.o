@@ -211,12 +211,12 @@ const StatsDisplay: React.FC<StatsDisplayProps> = ({ profileData }) => {
           <div className="total-points">
             {formatPoints(profileData.stats.totalPoints)}
           </div>
-          <div className="points-breakdown">
+          {/* <div className="points-breakdown">
             <span>Code Track: {formatPoints(categoryPoints.codeTrack)}</span>
             <span>Code Test: {formatPoints(categoryPoints.codeTest)}</span>
             <span>Daily Test: {formatPoints(categoryPoints.dailyTest)}</span>
             <span>Daily Challenge: {formatPoints(categoryPoints.dailyChallenge)}</span>
-          </div>
+          </div> */}
         </div>
       </div>
 

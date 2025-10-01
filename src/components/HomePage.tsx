@@ -38,32 +38,40 @@ export function HomePage({
       {/* Network Status Indicator */}
       <NetworkStatus onStatusChange={onNetworkStatusChange} />
       
-      <header className="app-header">
-        <h1>SkillRack Tracker</h1>
-        <p className="app-description">
-          Analyze your SkillRack profile and plan your coding goals
-        </p>
+      <header className="home-hero">
+        <div className="hero-content">
+          <h1 className="hero-title">Track Your SkillRack Progress</h1>
+          <p className="hero-subtitle">Analyze your profile, understand your stats, and plan goals to level up.</p>
+          <a href="#analyze" className="btn btn-primary hero-cta">Get Started</a>
+        </div>
+        <div className="hero-steps" aria-label="Steps">
+          <div className="step active"><span className="step-index">1</span><span className="step-label">Link</span></div>
+          <div className="step"><span className="step-index">2</span><span className="step-label">Analyze</span></div>
+          <div className="step"><span className="step-index">3</span><span className="step-label">Plan</span></div>
+        </div>
       </header>
 
       <main className="home-main">
-        {/* Instructions Section - Requirements 7.1, 7.2, 7.3, 7.4, 7.5 */}
-        <section className="instructions-section">
-          <h2>How to Find Your SkillRack Profile Link</h2>
-          <ol className="instructions-list">
-            <li>Login to your SkillRack account</li>
-            <li>Navigate to your Profile page</li>
-            <li>Enter your password when prompted</li>
-            <li>Click the 'View' button to access your profile</li>
-            <li>Copy the URL from your browser's address bar</li>
-            <li>Paste the URL in the field below</li>
-          </ol>
-          <p className="instructions-note">
-            <strong>Note:</strong> Make sure you're on your actual profile page, not just the login page.
-          </p>
-        </section>
+        {/* Instructions Section - Progressive Disclosure */}
+        <details className="instructions-section" open>
+          <summary className="instructions-summary">How to find your SkillRack profile link</summary>
+          <div className="instructions-content">
+            <ol className="instructions-list">
+              <li>Login to your SkillRack account</li>
+              <li>Navigate to your Profile page</li>
+              <li>Enter your password when prompted</li>
+              <li>Click the 'View' button to access your profile</li>
+              <li>Copy the URL from your browser's address bar</li>
+              <li>Paste the URL in the field below</li>
+            </ol>
+            <p className="instructions-note">
+              <strong>Note:</strong> Make sure you're on your actual profile page, not just the login page.
+            </p>
+          </div>
+        </details>
 
         {/* Profile Input Section - Requirements 4.1, 4.7, 8.1 */}
-        <section className="profile-input-section">
+        <section id="analyze" className="profile-input-section">
           <ProfileInput 
             onSubmit={onAnalyze} 
             loading={loading} 

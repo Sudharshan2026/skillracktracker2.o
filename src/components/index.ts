@@ -12,3 +12,7 @@ export { default as ThemeToggle } from './ThemeToggle';
 // Page components
 export { HomePage } from './HomePage';
 export { ResultsPage } from './ResultsPage';
+
+// Sheet component
+export * from './sheet';
+export * from './floating-header';

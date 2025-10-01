@@ -1,6 +1,7 @@
 import { StatsDisplay, GoalCalculator, ResultsDisplay } from './index';
 import type { SkillRackProfile, GoalCalculation } from '../types';
 import './ResultsPage.css';
+import ResultsHeader from './ResultsHeader';
 
 /**
  * Props for the ResultsPage component
@@ -35,20 +36,11 @@ export function ResultsPage({
 }: ResultsPageProps) {
   return (
     <div className="results-page">
-      <header className="results-header">
-        <div className="header-content">
-          <h1>Profile Analysis Results</h1>
-          <button 
-            onClick={onGoHome}
-            className="home-button"
-            type="button"
-          >
-            ← New Analysis
-          </button>
-        </div>
+      {/* <header className="results-header"> */}
+
         
         {/* Display analyzed URL - Requirement 8.4 */}
-        <div className="analyzed-url-section">
+        {/* <div className="analyzed-url-section">
           <label className="url-label">SkillRack Profile URL:</label>
           <div className="url-display">
             <a 
@@ -60,43 +52,37 @@ export function ResultsPage({
               {analyzedUrl}
             </a>
           </div>
-        </div>
-      </header>
+        </div> */}
+      {/* </header> */}
+
+      {/* Centered section links header */}
+      <ResultsHeader analyzedUrl={analyzedUrl} onGoHome={onGoHome} showPlan={!!goalResults} />
 
       <main className="results-main">
-        {/* SkillRack-inspired layout - Requirements 8.3, 4.3 */}
-        <div className="results-grid">
-          {/* Profile Statistics Section */}
-          <section className="profile-section">
-            <div className="section-header">
-              <h2>Profile Statistics</h2>
-            </div>
-            <div className="profile-card">
-              <StatsDisplay profileData={profileData} />
-            </div>
-          </section>
+        {/* Profile Statistics - simplified, flowing layout */}
+        <section id="stats" className="profile-section minimal-section">
+          <h2 className="section-title">Profile Statistics</h2>
+          <div className="section-body">
+            <StatsDisplay profileData={profileData} />
+          </div>
+        </section>
 
-          {/* Goal Calculator Section */}
-          <section className="goal-section">
-            <div className="section-header">
-              <h2>Goal Planning</h2>
-            </div>
-            <div className="goal-card">
-              <GoalCalculator 
-                currentPoints={profileData.stats.totalPoints}
-                onCalculate={onCalculateGoal}
-              />
-            </div>
-          </section>
-        </div>
+        {/* Goal Planning */}
+        <section id="goals" className="goal-section minimal-section">
+          <h2 className="section-title">Goal Planning</h2>
+          <div className="section-body">
+            <GoalCalculator 
+              currentPoints={profileData.stats.totalPoints}
+              onCalculate={onCalculateGoal}
+            />
+          </div>
+        </section>
 
-        {/* Results Display Section */}
+        {/* Results Display */}
         {goalResults && (
-          <section className="goal-results-section">
-            <div className="section-header">
-              <h2>Achievement Plan</h2>
-            </div>
-            <div className="results-card">
+          <section id="plan" className="goal-results-section minimal-section">
+            <h2 className="section-title">Achievement Plan</h2>
+            <div className="section-body">
               <ResultsDisplay goalResults={goalResults} />
             </div>
           </section>
