@@ -33,7 +33,7 @@ const ThemeToggle: React.FC = () => {
     <button 
       className={cn(
         buttonVariants({ variant: 'ghost', size: 'sm' }),
-        'gap-1'
+        'gap-1 btn-white'
       )}
       onClick={toggleTheme}
       aria-label={`Switch to ${isDark ? 'light' : 'dark'} theme`}
