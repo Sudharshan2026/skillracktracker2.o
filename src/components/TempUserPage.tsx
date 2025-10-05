@@ -1,16 +1,20 @@
 import { useState } from 'react';
-import type { SkillRackProfile } from '../types';
+import type { SkillRackProfile, GoalCalculation } from '../types';
+import StatsDisplay from './StatsDisplay';
+import ResultsDisplay from './ResultsDisplay';
+import GoalCalculator from './GoalCalculator';
 import './TempUserPage.css';
 
 export function TempUserPage() {
   const [profileUrl, setProfileUrl] = useState('');
   const [showPreview, setShowPreview] = useState(false);
+  const [goalResults, setGoalResults] = useState<GoalCalculation | null>(null);
 
   const sampleProfile: SkillRackProfile = {
     profileImage: 'https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=200',
     name: 'John Doe',
     id: 'SEC23AD073',
-    department: 'Computer Science',
+    department: 'Computer Science and Engineering',
     college: 'Example Engineering College',
     year: '2023-2027',
     gender: 'Male',
@@ -59,15 +63,72 @@ export function TempUserPage() {
   const handleReset = () => {
     setShowPreview(false);
     setProfileUrl('');
+    setGoalResults(null);
+  };
+
+  const handleGoalCalculate = (targetPoints: number, timelineDays: number) => {
+    const currentPoints = sampleProfile.stats.totalPoints;
+    const requiredPoints = Math.max(0, targetPoints - currentPoints);
+
+    const suggestions = [];
+
+    if (requiredPoints === 0) {
+      suggestions.push({
+        strategy: 'Goal Already Achieved',
+        description: 'Congratulations! You have already reached your target points.',
+        feasible: true,
+      });
+    } else {
+      const codeTracksNeeded = Math.ceil(requiredPoints / 2);
+      const codeTracksPerDay = Math.ceil(codeTracksNeeded / timelineDays);
+      suggestions.push({
+        strategy: 'Code Tracks Only',
+        description: `Solve ${codeTracksNeeded} Code Track problems`,
+        dailyRequirement: `${codeTracksPerDay} Code Tracks per day`,
+        feasible: codeTracksPerDay <= 10,
+      });
+
+      const dailyTestsNeeded = Math.ceil(requiredPoints / 20);
+      suggestions.push({
+        strategy: 'Daily Tests Only',
+        description: `Complete ${dailyTestsNeeded} Daily Tests`,
+        dailyRequirement: '1 Daily Test per day',
+        feasible: dailyTestsNeeded <= timelineDays,
+      });
+
+      const dailyTestDays = Math.min(timelineDays, Math.ceil(requiredPoints / 20));
+      const remainingPoints = Math.max(0, requiredPoints - (dailyTestDays * 20));
+      const additionalCodeTracks = Math.ceil(remainingPoints / 2);
+
+      if (dailyTestDays > 0 && additionalCodeTracks > 0) {
+        suggestions.push({
+          strategy: 'Mixed Strategy',
+          description: `${dailyTestDays} Daily Tests + ${additionalCodeTracks} Code Tracks`,
+          dailyRequirement: `1 Daily Test + ${Math.ceil(additionalCodeTracks / timelineDays)} Code Tracks per day`,
+          feasible: Math.ceil(additionalCodeTracks / timelineDays) <= 5,
+        });
+      }
+    }
+
+    const calculation: GoalCalculation = {
+      targetPoints,
+      currentPoints,
+      timelineDays,
+      requiredPoints,
+      suggestions,
+    };
+
+    setGoalResults(calculation);
   };
 
   if (!showPreview) {
     return (
       <div className="temp-user-container">
         <div className="temp-user-card">
-          <h1 className="temp-user-title">Preview: Profile URL Input</h1>
+          <div className="demo-badge">Demo Mode</div>
+          <h1 className="temp-user-title">Profile Preview</h1>
           <p className="temp-user-description">
-            Enter your SkillRack profile URL to see how your profile data will be displayed
+            Enter any SkillRack profile URL to see how your profile data will be displayed in the tracker
           </p>
 
           <form onSubmit={handleSubmit} className="temp-user-form">
@@ -84,6 +145,9 @@ export function TempUserPage() {
                 className="profile-url-input"
                 required
               />
+              <p className="input-help">
+                This is a demo with sample data. The actual app will parse your real profile.
+              </p>
             </div>
 
             <button type="submit" className="submit-button">
@@ -98,161 +162,52 @@ export function TempUserPage() {
   return (
     <div className="temp-user-results">
       <header className="temp-user-header">
-        <button onClick={handleReset} className="back-button">
-          ← Back
-        </button>
         <div className="header-content">
-          <h1>Profile Analysis Result</h1>
-          <p className="analyzed-url">
-            <span className="url-label">Analyzing:</span>
-            <span className="url-text">{profileUrl}</span>
-          </p>
+          <button onClick={handleReset} className="back-button">
+            ← Back to Input
+          </button>
+          <div className="demo-indicator">
+            <span className="demo-label">Demo Mode</span>
+            <span className="demo-note">Showing sample data</span>
+          </div>
+        </div>
+        <div className="analyzed-url-display">
+          <span className="url-label">Analyzing:</span>
+          <span className="url-text">{profileUrl}</span>
         </div>
       </header>
 
-      <div className="profile-content">
-        <div className="profile-hero">
-          <div className="profile-image-container">
-            <img
-              src={sampleProfile.profileImage}
-              alt={sampleProfile.name}
-              className="profile-image"
+      <div className="temp-user-content">
+        <section id="stats" className="profile-section minimal-section">
+          <StatsDisplay profileData={sampleProfile} />
+        </section>
+
+        <section id="goals" className="goal-section minimal-section">
+          <h2 className="section-title">Goal Planning</h2>
+          <div className="section-body">
+            <GoalCalculator
+              currentPoints={sampleProfile.stats.totalPoints}
+              onCalculate={handleGoalCalculate}
             />
           </div>
-          <div className="profile-info">
-            <h2 className="profile-name">{sampleProfile.name}</h2>
-            <p className="profile-id">{sampleProfile.id}</p>
-            <p className="profile-meta">{sampleProfile.department}</p>
-            <p className="profile-meta">{sampleProfile.college}</p>
-            <p className="profile-meta">Year: {sampleProfile.year}</p>
-          </div>
-        </div>
+        </section>
 
-        <div className="stats-grid">
-          <div className="stat-card highlight-card">
-            <div className="stat-icon">🎯</div>
-            <div className="stat-value">{sampleProfile.stats.totalPoints}</div>
-            <div className="stat-label">Total Points</div>
-          </div>
-
-          <div className="stat-card">
-            <div className="stat-icon">📊</div>
-            <div className="stat-value">{sampleProfile.stats.rank}</div>
-            <div className="stat-label">Rank</div>
-          </div>
-
-          <div className="stat-card">
-            <div className="stat-icon">⭐</div>
-            <div className="stat-value">{sampleProfile.stats.level}</div>
-            <div className="stat-label">Level</div>
-          </div>
-
-          <div className="stat-card">
-            <div className="stat-icon">💻</div>
-            <div className="stat-value">{sampleProfile.stats.programsSolved}</div>
-            <div className="stat-label">Programs Solved</div>
-          </div>
-        </div>
-
-        <div className="details-section">
-          <div className="section-card">
-            <h3 className="section-title">Problem Statistics</h3>
-            <div className="problem-stats">
-              <div className="problem-stat">
-                <span className="problem-label">Code Tutor</span>
-                <span className="problem-value">{sampleProfile.stats.codeTutor}</span>
-                <span className="problem-points">0 pts each</span>
-              </div>
-              <div className="problem-stat">
-                <span className="problem-label">Code Track</span>
-                <span className="problem-value">{sampleProfile.stats.codeTrack}</span>
-                <span className="problem-points">2 pts each</span>
-              </div>
-              <div className="problem-stat">
-                <span className="problem-label">Code Test</span>
-                <span className="problem-value">{sampleProfile.stats.codeTest}</span>
-                <span className="problem-points">30 pts each</span>
-              </div>
-              <div className="problem-stat">
-                <span className="problem-label">Daily Test</span>
-                <span className="problem-value">{sampleProfile.stats.dailyTest}</span>
-                <span className="problem-points">20 pts each</span>
-              </div>
-              <div className="problem-stat">
-                <span className="problem-label">Daily Challenge</span>
-                <span className="problem-value">{sampleProfile.stats.dailyChallenge}</span>
-                <span className="problem-points">2 pts each</span>
-              </div>
-            </div>
-          </div>
-
-          <div className="section-card">
-            <h3 className="section-title">Medals</h3>
-            <div className="medals-grid">
-              <div className="medal-item">
-                <span className="medal-icon gold">🥇</span>
-                <span className="medal-count">{sampleProfile.stats.gold}</span>
-                <span className="medal-label">Gold</span>
-              </div>
-              <div className="medal-item">
-                <span className="medal-icon silver">🥈</span>
-                <span className="medal-count">{sampleProfile.stats.silver}</span>
-                <span className="medal-label">Silver</span>
-              </div>
-              <div className="medal-item">
-                <span className="medal-icon bronze">🥉</span>
-                <span className="medal-count">{sampleProfile.stats.bronze}</span>
-                <span className="medal-label">Bronze</span>
-              </div>
-            </div>
-          </div>
-
-          <div className="section-card">
-            <h3 className="section-title">Programming Languages</h3>
-            <div className="languages-list">
-              {Object.entries(sampleProfile.languages).map(([lang, count]) => (
-                <div key={lang} className="language-item">
-                  <span className="language-name">{lang}</span>
-                  <div className="language-bar-container">
-                    <div
-                      className="language-bar"
-                      style={{ width: `${(count / Math.max(...Object.values(sampleProfile.languages))) * 100}%` }}
-                    />
-                  </div>
-                  <span className="language-count">{count}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="section-card">
-            <h3 className="section-title">Certificates</h3>
-            <div className="certificates-list">
-              {sampleProfile.certificates.map((cert, index) => (
-                <div key={index} className="certificate-item">
-                  <div className="certificate-info">
-                    <h4 className="certificate-title">{cert.title}</h4>
-                    <p className="certificate-date">{cert.date}</p>
-                  </div>
-                  <a
-                    href={cert.link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="certificate-link"
-                  >
-                    View →
-                  </a>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
+        {goalResults && (
+          <section id="plan" className="results-section minimal-section">
+            <ResultsDisplay goalResults={goalResults} />
+          </section>
+        )}
       </div>
 
       <footer className="temp-user-footer">
-        <button onClick={handleReset} className="try-again-button">
-          Try Another Profile
-        </button>
+        <div className="footer-content">
+          <p className="footer-text">
+            This is a preview with sample data. The actual application will parse your real SkillRack profile.
+          </p>
+          <button onClick={handleReset} className="footer-button">
+            Try Another URL
+          </button>
+        </div>
       </footer>
     </div>
   );

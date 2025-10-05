@@ -1,6 +1,6 @@
 # Temporary User Page Demo
 
-A preview page showing how profile data will be displayed when a user provides their SkillRack profile URL.
+A preview page showing how profile data will be displayed when a user provides their SkillRack profile URL. The demo uses the existing components from the main application to ensure consistency.
 
 ## How to Access
 
@@ -17,49 +17,74 @@ https://your-domain.com/?demo=true
 
 ## Features Demonstrated
 
-1. **Profile URL Input**
-   - Clean input form accepting SkillRack profile URLs
-   - Validation and user-friendly interface
+### 1. Profile URL Input
+- Clean input form with demo mode indicator
+- URL validation and user-friendly interface
+- Clear instructions that this is sample data
 
-2. **Profile Display Preview**
-   - Profile hero section with image and basic info
-   - Comprehensive statistics grid
-   - Problem-solving breakdown by category
-   - Medal achievements display
-   - Programming languages with visual progress bars
-   - Certificate listings
+### 2. Profile Statistics Display
+- Uses the same `StatsDisplay` component as the main app
+- Shows all problem categories with point calculations
+- Displays profile information and achievements
+- Medal counts and programming languages
+- Certificate listings
+
+### 3. Goal Planning
+- Uses the same `GoalCalculator` component
+- Interactive goal setting with target points and timeline
+- Real-time calculation based on sample data
+
+### 4. Achievement Plans
+- Uses the same `ResultsDisplay` component
+- Shows recommended strategies to reach goals
+- Feasibility indicators and daily requirements
+- Tips for success
 
 ## Sample Data
 
-The demo uses realistic sample data including:
-- Profile information (name, ID, department, college, year)
-- Statistics (1100 total points, rank 142, level 12)
-- Problem counts across all categories
-- Medal counts (Gold, Silver, Bronze)
-- Programming language proficiency
-- Certificate achievements
+The demo uses realistic sample data:
+- **Profile**: John Doe (SEC23AD073)
+- **Department**: Computer Science and Engineering
+- **Total Points**: 1100
+- **Rank**: 142, Level: 12
+- **Medals**: 15 Gold, 30 Silver, 20 Bronze
+- **Problem Counts**:
+  - Code Track: 120 (2 pts each)
+  - Code Test: 8 (30 pts each)
+  - Daily Test: 25 (20 pts each)
+  - Daily Challenge: 30 (2 pts each)
+  - Code Tutor: 45 (0 pts each)
+- **Languages**: Python, Java, C, C++, JavaScript
+- **Certificates**: 2 sample certificates
 
 ## Visual Design
 
-The temporary page showcases:
-- Modern gradient background
-- Card-based layout
-- Responsive grid system
-- Smooth hover effects
-- Professional color scheme
-- Clear visual hierarchy
-- Mobile-responsive design
+The page follows the existing design system:
+- Professional blue gradient (instead of purple)
+- Card-based layout matching the main app
+- Responsive design with proper breakpoints
+- Clear demo mode indicators
+- Consistent typography and spacing
 
-## Navigation
+## Components Reused
 
-- From the input page, click "Preview Profile Display" to see the results
-- From the results page, click "Try Another Profile" to return to input
-- The back button allows quick navigation
+- `StatsDisplay` - Full profile statistics table
+- `GoalCalculator` - Interactive goal planning form
+- `ResultsDisplay` - Achievement path recommendations
+
+## Navigation Flow
+
+1. Enter any SkillRack profile URL
+2. Click "Preview Profile Display"
+3. View complete profile stats (sample data)
+4. Set a goal and get achievement plans
+5. Click "Try Another URL" to return
 
 ## Use Case
 
-This page helps users understand:
-- What data will be extracted from their profile URL
-- How their statistics will be displayed
-- The visual presentation of their achievements
-- The overall user experience flow
+This demo page helps users:
+- Understand what data will be extracted from their profile
+- See how statistics will be calculated and displayed
+- Preview the goal planning functionality
+- Experience the complete user flow with sample data
+- Verify the design and layout before using real data
