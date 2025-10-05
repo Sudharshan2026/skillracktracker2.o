@@ -5,6 +5,8 @@
   flex-direction: column;
 }
 
+/* Removed old custom nav styles in favor of Tailwind-based FloatingHeader */
+
 .results-header {
   background: #2c3e50;
   color: white;
@@ -12,7 +14,7 @@
 }
 
 .header-content {
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto;
   display: flex;
   justify-content: space-between;
@@ -41,7 +43,7 @@
 }
 
 .analyzed-url-section {
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto;
 }
 
@@ -71,17 +73,37 @@
 
 .results-main {
   flex: 1;
-  max-width: 1200px;
+  max-width: 1800px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: 2rem 0;
   width: 100%;
 }
 
-.results-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 2rem;
-  margin-bottom: 2rem;
+/* Direct display without box styling */
+.results-main-direct {
+  flex: 1;
+  max-width: 1800px;
+  margin: 0 auto;
+  padding: 2rem 0;
+  width: 100%;
+}
+
+/* Direct subsection styling without boxes */
+.subsection-direct {
+  margin-bottom: 3rem;
+}
+
+.subsection-direct:last-child {
+  margin-bottom: 0;
+}
+
+.subsection-title {
+  margin: 0 0 1rem 0;
+  color: #34495e;
+  font-size: 1.2rem;
+  font-weight: 500;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #ecf0f1;
 }
 
 .section-header {
@@ -94,15 +116,7 @@
   font-size: 1.5rem;
 }
 
-.profile-card,
-.goal-card,
-.results-card {
-  background: white;
-  border-radius: 8px;
-  padding: 2rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  border: 1px solid #e9ecef;
-}
+/* Remove heavy card styling in favor of light section body above */
 
 .goal-results-section {
   margin-top: 2rem;
@@ -115,7 +129,7 @@
 }
 
 .footer-content {
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto;
   display: flex;
   justify-content: space-between;
@@ -144,15 +158,11 @@
 
 /* Responsive design */
 @media (max-width: 1024px) {
-  .results-grid {
-    grid-template-columns: 1fr;
-    gap: 1.5rem;
-  }
 }
 
 @media (max-width: 768px) {
   .results-main {
-    padding: 1rem;
+    padding: 1rem 0.5rem;
   }
   
   .results-header {
@@ -171,9 +181,7 @@
     text-align: center;
   }
   
-  .profile-card,
-  .goal-card,
-  .results-card {
-    padding: 1.5rem;
+  .section-body {
+    padding: 1rem;
   }
 }

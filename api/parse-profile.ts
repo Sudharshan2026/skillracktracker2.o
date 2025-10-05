@@ -9,7 +9,32 @@ interface ProfileStats {
   codeTest: number;
   dailyTest: number;
   dailyChallenge: number;
+  rank: number;
+  level: number;
+  gold: number;
+  silver: number;
+  bronze: number;
+  programsSolved: number;
   totalPoints: number;
+}
+
+interface Certificate {
+  title: string;
+  date: string;
+  link: string;
+}
+
+interface SkillRackProfile {
+  profileImage?: string;
+  name: string;
+  id: string;
+  department: string;
+  college: string;
+  year: string;
+  gender: string;
+  stats: ProfileStats;
+  languages: Record<string, number>;
+  certificates: Certificate[];
 }
 
 // URL validation for SkillRack profile format
@@ -46,12 +71,41 @@ function calculateTotalPoints(stats: Omit<ProfileStats, 'totalPoints'>): number 
   return codeTrackPoints + dailyTestPoints + dailyChallengePoints + codeTestPoints;
 }
 
-// Function to parse profile statistics from HTML
-function parseProfileStats(html: string): ProfileStats {
+// Function to parse complete SkillRack profile from HTML
+function parseSkillRackProfile(html: string): SkillRackProfile {
   const $ = cheerio.load(html);
   
+  // Extract profile image
+  const profileImage = $('#j_id_s').attr('src');
+
+  // Extract name - only get the text from the label element
+  const name = $('.ui.big.label.black').first().text().trim();
+  
+  // Extract ID - look for specific pattern SEC23AD073
+  const idElement = $('.ui.four.wide.center.aligned.column').text();
+  const idMatch = idElement.match(/([A-Z]{3}\d{2}[A-Z]{2}\d{3})/); // Format like SEC23AD073
+  const id = idMatch ? idMatch[1] : '';
+
+  // Extract department/course
+  const department = $('.ui.large.label').text().trim();
+
+  // Extract college and year
+  const collegeYearText = $('.ui.four.wide.center.aligned.column').text();
+  
+  // Extract college name - look for text after department and before year
+  const collegeRegex = new RegExp(department + '\\s*\\n\\s*(.+?)\\s*\\n\\s*\\(');
+  const collegeMatch = collegeYearText.match(collegeRegex);
+  const college = collegeMatch ? collegeMatch[1].trim() : '';
+  
+  // Extract year from parentheses
+  const yearMatch = collegeYearText.match(/\(([^)]+)\s+(\d{4})\)/);
+  const year = yearMatch ? yearMatch[2].trim() : '';
+
+  // Extract gender
+  const gender = $('.ui.fourteen.wide.left.aligned.column').text().trim();
+
   // Extract values by label matching from .statistic elements
-  function extractValueByLabel(labelText: string): number {
+  function extractStatValue(labelText: string): number {
     let value = 0;
     
     $('.statistic').each((_, element) => {
@@ -66,29 +120,70 @@ function parseProfileStats(html: string): ProfileStats {
     return value;
   }
   
-  // Extract statistics for each category
-  const codeTest = extractValueByLabel('CODE TEST');
-  const codeTrack = extractValueByLabel('CODE TRACK');
-  const dailyChallenge = extractValueByLabel('DC');
-  const dailyTest = extractValueByLabel('DT');
-  const codeTutor = extractValueByLabel('CODE TUTOR');
-  
-  // Calculate points according to SkillRack scoring system
-  const totalPoints = calculateTotalPoints({
-    codeTutor,
-    codeTrack,
-    codeTest,
-    dailyTest,
-    dailyChallenge
+  // Extract programming statistics
+  const stats: Omit<ProfileStats, 'totalPoints'> = {
+    rank: extractStatValue('RANK'),
+    level: extractStatValue('LEVEL'),
+    gold: extractStatValue('GOLD'),
+    silver: extractStatValue('SILVER'),
+    bronze: extractStatValue('BRONZE'),
+    programsSolved: extractStatValue('PROGRAMS SOLVED'),
+    codeTest: extractStatValue('CODE TEST'),
+    codeTrack: extractStatValue('CODE TRACK'),
+    dailyChallenge: extractStatValue('DC'),
+    dailyTest: extractStatValue('DT'),
+    codeTutor: extractStatValue('CODE TUTOR')
+  };
+
+  // Calculate total points
+  const totalPoints = calculateTotalPoints(stats);
+
+  // Extract programming languages - direct approach
+  const languages: Record<string, number> = {};
+  const languageStats = $('div.ui.six.small.statistics').eq(1); // Second statistics section
+  languageStats.find('.statistic').each((i, el) => {
+    const label = $(el).find('.label').text().trim();
+    const valueText = $(el).find('.value').text();
+    const value = parseInt(valueText.replace(/[^0-9]/g, '')) || 0;
+    if (label && value) {
+      languages[label] = value;
+    }
   });
-  
+
+  // Extract certificates
+  const certificates: Certificate[] = [];
+  $('.ui.brown.card').each((i, el) => {
+    const title = $(el).find('b').text().trim();
+    
+    // Extract date with a more precise approach
+    let date = '';
+    const contentText = $(el).find('.content').text();
+    // Look for the date pattern directly
+    const dateMatch = contentText.match(/(\d{2}-\d{2}-\d{4}\s+\d{2}:\d{2})/);
+    if (dateMatch) {
+      date = dateMatch[1];
+    }
+    
+    const link = $(el).find('a').attr('href') || '';
+    
+    certificates.push({
+      title,
+      date,
+      link
+    });
+  });
+
   return {
-    codeTutor,
-    codeTrack,
-    codeTest,
-    dailyTest,
-    dailyChallenge,
-    totalPoints
+    profileImage,
+    name,
+    id,
+    department,
+    college,
+    year,
+    gender,
+    stats: { ...stats, totalPoints },
+    languages,
+    certificates
   };
 }
 
@@ -123,7 +218,7 @@ const MAX_REQUESTS_PER_WINDOW = 10;
 
 interface ApiResponse {
   success: boolean;
-  data?: ProfileStats;
+  data?: SkillRackProfile;
   error?: string;
   code?: 'INVALID_URL' | 'NETWORK_ERROR' | 'PARSE_ERROR' | 'NOT_FOUND';
 }
@@ -225,12 +320,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
       timeout: 10000 // 10 second timeout
     });
     
-    // Parse the HTML and extract statistics
-    const profileStats = parseProfileStats(axiosResponse.data);
+    // Parse the HTML and extract complete profile data
+    const profileData = parseSkillRackProfile(axiosResponse.data);
     
     const response: ApiResponse = {
       success: true,
-      data: profileStats
+      data: profileData
     };
     
     res.status(200).json(response);
