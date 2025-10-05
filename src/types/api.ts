@@ -1,11 +1,11 @@
-import type { ProfileStats } from './profile';
+import type { SkillRackProfile } from './profile';
 
 /**
  * Success response from the profile parsing API
  */
 export interface ApiSuccessResponse {
   success: true;
-  data: ProfileStats;
+  data: SkillRackProfile;
 }
 
 /**

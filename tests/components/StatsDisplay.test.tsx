@@ -1,25 +1,69 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import StatsDisplay from '../../src/components/StatsDisplay';
-import type { ProfileStats } from '../../src/types';
+import type { SkillRackProfile } from '../../src/types';
 
 describe('StatsDisplay Component', () => {
-  const mockProfileData: ProfileStats = {
-    codeTutor: 100,
-    codeTrack: 470,
-    codeTest: 15,
-    dailyTest: 30,
-    dailyChallenge: 25,
-    totalPoints: 2040
+  const mockProfileData: SkillRackProfile = {
+    profileImage: 'https://example.com/profile.jpg',
+    name: 'John Doe',
+    id: 'SEC23AD073',
+    department: 'Computer Science Engineering',
+    college: 'Test College',
+    year: '2024',
+    gender: 'Male',
+    stats: {
+      codeTutor: 100,
+      codeTrack: 470,
+      codeTest: 15,
+      dailyTest: 30,
+      dailyChallenge: 25,
+      rank: 50,
+      level: 8,
+      gold: 5,
+      silver: 10,
+      bronze: 15,
+      programsSolved: 540,
+      totalPoints: 2040
+    },
+    languages: {
+      'Python': 200,
+      'Java': 150,
+      'C': 100
+    },
+    certificates: [
+      {
+        title: 'Programming Fundamentals',
+        date: '01-01-2024 10:00',
+        link: 'https://example.com/cert1'
+      }
+    ]
   };
 
-  const zeroProfileData: ProfileStats = {
-    codeTutor: 0,
-    codeTrack: 0,
-    codeTest: 0,
-    dailyTest: 0,
-    dailyChallenge: 0,
-    totalPoints: 0
+  const zeroProfileData: SkillRackProfile = {
+    profileImage: '',
+    name: 'Test User',
+    id: 'TEST00000',
+    department: 'Computer Science',
+    college: 'Test College',
+    year: '2024',
+    gender: 'Other',
+    stats: {
+      codeTutor: 0,
+      codeTrack: 0,
+      codeTest: 0,
+      dailyTest: 0,
+      dailyChallenge: 0,
+      rank: 0,
+      level: 0,
+      gold: 0,
+      silver: 0,
+      bronze: 0,
+      programsSolved: 0,
+      totalPoints: 0
+    },
+    languages: {},
+    certificates: []
   };
 
   describe('Rendering', () => {

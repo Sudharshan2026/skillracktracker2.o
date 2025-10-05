@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import type { NavigationState, NavigationActions, ProfileStats } from '../types';
+import type { NavigationState, NavigationActions, SkillRackProfile } from '../types';
 import { 
   parseUrlState, 
   navigateToHome as navToHome, 
@@ -41,7 +41,7 @@ export function useNavigation(): NavigationHook {
    * Navigate to results page with profile data
    * Requirements 8.2: Navigate to dedicated results page
    */
-  const navigateToResults = useCallback((url: string, _data: ProfileStats) => {
+  const navigateToResults = useCallback((url: string, _data: SkillRackProfile) => {
     // Update URL first
     navToResults(url);
     

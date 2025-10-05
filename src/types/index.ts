@@ -1,5 +1,5 @@
 // Profile-related types
-export type { ProfileStats } from './profile';
+export type { ProfileStats, SkillRackProfile, Certificate } from './profile';
 
 // Goal calculation types
 export type { GoalCalculation, AchievementPath } from './goals';

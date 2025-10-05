@@ -77,19 +77,6 @@ const ProfileInput: React.FC<ProfileInputProps> = ({ onSubmit, loading }) => {
   return (
     <div className="profile-input">
       {/* Step-by-step instructions - Requirements 7.1, 7.2, 7.3 */}
-      <div className="instructions">
-        <h2>How to Find Your SkillRack Profile Link</h2>
-        <ol className="instruction-steps">
-          <li>Login to your SkillRack account</li>
-          <li>Go to your Profile section</li>
-          <li>Enter your password when prompted</li>
-          <li>Click the 'View' button to access your profile</li>
-          <li>Copy the URL from your browser's address bar</li>
-        </ol>
-        <p className="instruction-note">
-          Your profile URL should look like: <code>https://www.skillrack.com/profile/123456/abcdef</code>
-        </p>
-      </div>
 
       {/* URL input form - Requirements 4.1, 7.4 */}
       <form onSubmit={handleSubmit} className="url-form">

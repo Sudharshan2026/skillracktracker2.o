@@ -1,4 +1,4 @@
-import type { ProfileStats, GoalCalculation, ApiResponse } from './index';
+import type { SkillRackProfile, GoalCalculation, ApiResponse } from './index';
 
 /**
  * Navigation state interface for routing between pages
@@ -23,8 +23,8 @@ export interface NavigationState {
  * Manages all application data and navigation state
  */
 export interface AppState extends NavigationState {
-  /** Parsed profile statistics */
-  profileData: ProfileStats | null;
+  /** Parsed profile data */
+  profileData: SkillRackProfile | null;
   
   /** Goal calculation results */
   goalResults: GoalCalculation | null;
@@ -35,7 +35,7 @@ export interface AppState extends NavigationState {
  */
 export interface NavigationActions {
   /** Navigate to results page with profile data */
-  navigateToResults: (url: string, data: ProfileStats) => void;
+  navigateToResults: (url: string, data: SkillRackProfile) => void;
   
   /** Navigate back to home page */
   navigateToHome: () => void;
