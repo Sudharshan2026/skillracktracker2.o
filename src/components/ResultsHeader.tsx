@@ -2,6 +2,7 @@ import { Button, buttonVariants } from '@/components/ui/button';
 import ThemeToggle from './ThemeToggle';
 
 export interface ResultsHeaderProps {
+  analyzedUrl: string;
   onGoHome: () => void;
   showPlan?: boolean;
   onLogout?: () => void;

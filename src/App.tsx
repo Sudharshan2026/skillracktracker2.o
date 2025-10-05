@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import type { SkillRackProfile, GoalCalculation, ApiResponse } from './types';
-import { HomePage, ResultsPage} from './components';
+import { HomePage, ResultsPage, TempUserPage } from './components';
 import { useNavigation } from './hooks/useNavigation';
 import './App.css';
 
@@ -9,9 +9,13 @@ import './App.css';
  * Implements requirements 3.1, 3.2, 3.3, 3.4, 8.1, 8.2, 8.6 for stateless design and navigation
  */
 function App() {
+  // Check if demo mode is enabled via URL parameter
+  const urlParams = new URLSearchParams(window.location.search);
+  const isDemoMode = urlParams.get('demo') === 'true';
+
   // Navigation state and actions
   const navigation = useNavigation();
-  
+
   // Application state - Requirement 3.2: No data persistence
   const [profileData, setProfileData] = useState<SkillRackProfile | null>(null);
   const [goalResults, setGoalResults] = useState<GoalCalculation | null>(null);
@@ -144,11 +148,20 @@ function App() {
     navigation.navigateToHome();
   }, [navigation]);
 
+  // Render demo page if demo mode is enabled
+  if (isDemoMode) {
+    return (
+      <div className="app">
+        <TempUserPage />
+      </div>
+    );
+  }
+
   // Render appropriate page based on navigation state - Requirements 8.1, 8.2, 8.6
   return (
     <div className="app">
       {/* Theme Toggle - Available on all pages */}
-      
+
       {navigation.currentPage === 'home' && (
         <HomePage
           onAnalyze={handleProfileSubmit}
@@ -158,7 +171,7 @@ function App() {
           onNetworkStatusChange={() => {}}
         />
       )}
-      
+
       {navigation.currentPage === 'results' && profileData && navigation.analyzedUrl && (
         <ResultsPage
           profileData={profileData}

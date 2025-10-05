@@ -12,6 +12,7 @@ export { default as ThemeToggle } from './ThemeToggle';
 // Page components
 export { HomePage } from './HomePage';
 export { ResultsPage } from './ResultsPage';
+export { TempUserPage } from './TempUserPage';
 
 // Sheet component
 export * from './sheet';
