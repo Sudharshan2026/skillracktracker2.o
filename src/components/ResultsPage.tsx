@@ -58,34 +58,28 @@ export function ResultsPage({
       {/* Centered section links header */}
       <ResultsHeader analyzedUrl={analyzedUrl} onGoHome={onGoHome} showPlan={!!goalResults} />
 
-      <main className="results-main">
-        {/* Profile Statistics - simplified, flowing layout */}
-        <section id="stats" className="profile-section minimal-section">
-          <h2 className="section-title">Profile Statistics</h2>
-          <div className="section-body">
-            <StatsDisplay profileData={profileData} />
-          </div>
-        </section>
+      <main className="results-main-direct">
+        {/* Profile Statistics */}
+        <div id="stats" className="subsection-direct">
+          <h3 className="subsection-title">Profile Statistics</h3>
+          <StatsDisplay profileData={profileData} />
+        </div>
 
         {/* Goal Planning */}
-        <section id="goals" className="goal-section minimal-section">
-          <h2 className="section-title">Goal Planning</h2>
-          <div className="section-body">
-            <GoalCalculator 
-              currentPoints={profileData.stats.totalPoints}
-              onCalculate={onCalculateGoal}
-            />
-          </div>
-        </section>
+        <div id="goals" className="subsection-direct">
+          <h3 className="subsection-title">Goal Planning</h3>
+          <GoalCalculator 
+            currentPoints={profileData.stats.totalPoints}
+            onCalculate={onCalculateGoal}
+          />
+        </div>
 
         {/* Results Display */}
         {goalResults && (
-          <section id="plan" className="goal-results-section minimal-section">
-            <h2 className="section-title">Achievement Plan</h2>
-            <div className="section-body">
-              <ResultsDisplay goalResults={goalResults} />
-            </div>
-          </section>
+          <div id="plan" className="subsection-direct">
+            <h3 className="subsection-title">Achievement Plan</h3>
+            <ResultsDisplay goalResults={goalResults} />
+          </div>
         )}
       </main>
 
