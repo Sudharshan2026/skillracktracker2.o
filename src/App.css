@@ -118,9 +118,9 @@ body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto;
-  padding: var(--space-md);
+  padding: 0;
   background-color: var(--bg-primary);
 }
 
@@ -314,7 +314,7 @@ body {
 @media (max-width: 1024px) {
   .app {
     max-width: 100%;
-    padding: var(--space-md);
+    padding: 0;
   }
   
   .theme-toggle {
@@ -325,7 +325,7 @@ body {
 
 @media (max-width: 768px) {
   .app {
-    padding: var(--space-sm);
+    padding: 0;
   }
   
   .theme-toggle {
@@ -372,7 +372,7 @@ body {
 
 @media (max-width: 480px) {
   .app {
-    padding: var(--space-xs);
+    padding: 0;
   }
   
   .app-header {
