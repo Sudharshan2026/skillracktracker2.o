@@ -37,7 +37,7 @@ interface SkillRackProfile {
   certificates: Certificate[];
 }
 
-// URL validation for SkillRack profile format
+// URL validation for SkillRack profile format (accepts both profile and resume.xhtml formats)
 function validateSkillRackUrl(url: string): boolean {
   try {
     const urlObj = new URL(url);
@@ -52,9 +52,15 @@ function validateSkillRackUrl(url: string): boolean {
       return false;
     }
     
-    // Check if it matches the profile URL pattern: /profile/[id]/[hash]
-    const pathPattern = /^\/profile\/\d+\/[a-zA-Z0-9]+$/;
-    return pathPattern.test(urlObj.pathname);
+    // Check if it matches either format:
+    // 1. Profile URL pattern: /profile/[id]/[hash]
+    // 2. Resume URL pattern: /faces/resume.xhtml?id=[id]&key=[hash]
+    const profilePathPattern = /^\/profile\/\d+\/[a-zA-Z0-9]+$/;
+    const resumePathPattern = /^\/faces\/resume\.xhtml$/;
+    const hasValidParams = urlObj.searchParams.has('id') && urlObj.searchParams.has('key');
+    
+    return profilePathPattern.test(urlObj.pathname) || 
+           (resumePathPattern.test(urlObj.pathname) && hasValidParams);
   } catch {
     return false;
   }
@@ -71,9 +77,13 @@ function calculateTotalPoints(stats: Omit<ProfileStats, 'totalPoints'>): number 
   return codeTrackPoints + dailyTestPoints + dailyChallengePoints + codeTestPoints;
 }
 
-// Function to parse complete SkillRack profile from HTML
+// Function to parse complete SkillRack profile from HTML (works for both profile and resume.xhtml formats)
 function parseSkillRackProfile(html: string): SkillRackProfile {
   const $ = cheerio.load(html);
+  
+  // Debug: Log some basic info about the HTML structure
+  console.log('HTML title:', $('title').text());
+  console.log('HTML contains profile elements:', $('.ui.big.label.black').length > 0);
   
   // Extract profile image
   const profileImage = $('#j_id_s').attr('src');
@@ -213,6 +223,16 @@ function preprocessApiUrl(rawUrl: string): string {
     cleanedUrl = cleanedUrl.replace('://skillrack.com', '://www.skillrack.com');
   }
   
+  // Convert profile URL to resume.xhtml format to bypass Cloudflare protection
+  // Transform: https://www.skillrack.com/profile/440943/bf966a469d73bfb792f4d2a72a4762937ba3fc48
+  // To: https://www.skillrack.com/faces/resume.xhtml?id=440943&key=bf966a469d73bfb792f4d2a72a4762937ba3fc48
+  const profileMatch = cleanedUrl.match(/https?:\/\/www\.skillrack\.com\/profile\/(\d+)\/([a-zA-Z0-9]+)/);
+  if (profileMatch) {
+    const [, profileId, profileKey] = profileMatch;
+    cleanedUrl = `https://www.skillrack.com/faces/resume.xhtml?id=${profileId}&key=${profileKey}`;
+    console.log(`Converted profile URL to resume format: ${cleanedUrl}`);
+  }
+  
   return cleanedUrl;
 }
 
@@ -309,11 +329,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
       return;
     }
     
-    // Preprocess the URL to clean whitespace and normalize format
-    const cleanedUrl = preprocessApiUrl(url);
-    
-    // Validate SkillRack URL format using the cleaned URL
-    if (!validateSkillRackUrl(cleanedUrl)) {
+    // Validate original URL format before conversion
+    if (!validateSkillRackUrl(url)) {
       const response: ApiResponse = {
         success: false,
         error: 'Invalid SkillRack profile URL format. Expected: https://www.skillrack.com/profile/[id]/[hash]',
@@ -322,6 +339,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
       res.status(400).json(response);
       return;
     }
+    
+    // Preprocess the URL to clean whitespace, normalize format, and convert to resume.xhtml
+    console.log('Original URL:', url);
+    const cleanedUrl = preprocessApiUrl(url);
+    console.log('Processed URL:', cleanedUrl);
     
     // Fetch the profile page with retry logic and enhanced headers
     let axiosResponse: any = null;
