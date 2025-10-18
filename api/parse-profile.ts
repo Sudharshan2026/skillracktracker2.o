@@ -228,7 +228,18 @@ interface ApiResponse {
   code?: 'INVALID_URL' | 'NETWORK_ERROR' | 'PARSE_ERROR' | 'NOT_FOUND';
 }
 
-
+// Function to get random user agent to avoid detection
+function getRandomUserAgent(): string {
+  const userAgents = [
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36',
+    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+    'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/121.0',
+    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.1 Safari/605.1.15'
+  ];
+  return userAgents[Math.floor(Math.random() * userAgents.length)];
+}
 
 // Rate limiting function
 function checkRateLimit(clientIp: string): boolean {
@@ -312,42 +323,90 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
       return;
     }
     
-    // Fetch the profile page with enhanced headers to bypass Cloudflare protection
-    const axiosResponse = await axios.get(cleanedUrl, {
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
-        'Accept-Language': 'en-US,en;q=0.9',
-        'Accept-Encoding': 'gzip, deflate, br',
-        'Connection': 'keep-alive',
-        'Upgrade-Insecure-Requests': '1',
-        'Sec-Fetch-Dest': 'document',
-        'Sec-Fetch-Mode': 'navigate',
-        'Sec-Fetch-Site': 'cross-site',
-        'Sec-Ch-Ua': '"Not_A Brand";v="8", "Chromium";v="120", "Google Chrome";v="120"',
-        'Sec-Ch-Ua-Mobile': '?0',
-        'Sec-Ch-Ua-Platform': '"Windows"',
-        'Cache-Control': 'max-age=0',
-        'Referrer': 'https://www.google.com/',
-        'DNT': '1'
-      },
-      timeout: 15000, // Increased timeout for better reliability
-      maxRedirects: 5,
-      validateStatus: function (status) {
-        return status < 500; // Accept 4xx errors to handle them gracefully
+    // Fetch the profile page with retry logic and enhanced headers
+    let axiosResponse: any = null;
+    let attempt = 0;
+    const maxAttempts = 3;
+    
+    while (attempt < maxAttempts) {
+      attempt++;
+      
+      try {
+        // Add delay between attempts (except first)
+        if (attempt > 1) {
+          const delay = Math.random() * 2000 + 1000 * attempt; // 1-3s, 2-4s, 3-5s
+          await new Promise(resolve => setTimeout(resolve, delay));
+        }
+
+        // Create axios instance with session-like behavior
+        const axiosInstance = axios.create({
+          timeout: 20000,
+          maxRedirects: 5,
+          validateStatus: function (status) {
+            return status < 500;
+          },
+          // Add some session-like headers
+          withCredentials: false,
+        });
+
+        axiosResponse = await axiosInstance.get(cleanedUrl, {
+          headers: {
+            'User-Agent': getRandomUserAgent(),
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+            'Accept-Language': 'en-US,en;q=0.9',
+            'Accept-Encoding': 'gzip, deflate, br',
+            'Connection': 'keep-alive',
+            'Upgrade-Insecure-Requests': '1',
+            'Sec-Fetch-Dest': 'document',
+            'Sec-Fetch-Mode': 'navigate',
+            'Sec-Fetch-Site': attempt === 1 ? 'cross-site' : 'same-origin',
+            'Sec-Ch-Ua': '"Not_A Brand";v="8", "Chromium";v="120", "Google Chrome";v="120"',
+            'Sec-Ch-Ua-Mobile': '?0',
+            'Sec-Ch-Ua-Platform': '"Windows"',
+            'Cache-Control': attempt > 1 ? 'no-cache' : 'max-age=0',
+            'Referer': attempt === 1 ? 'https://www.google.com/' : 'https://www.skillrack.com/',
+            'DNT': '1',
+            // Vary headers slightly between attempts
+            ...(attempt > 1 && { 'Pragma': 'no-cache' }),
+            ...(attempt === 2 && { 'X-Requested-With': 'XMLHttpRequest' }),
+          }
+        });
+
+        // Check if we got blocked immediately after request
+        if (axiosResponse.status === 403 || 
+            axiosResponse.data.includes('cf-wrapper') || 
+            axiosResponse.data.includes('Cloudflare') ||
+            axiosResponse.data.includes('Sorry, you have been blocked') ||
+            axiosResponse.data.includes('Access denied') ||
+            axiosResponse.data.includes('Ray ID')) {
+          
+          console.log(`Attempt ${attempt}: Cloudflare block detected`);
+          
+          if (attempt === maxAttempts) {
+            throw new Error('Cloudflare protection detected - all retry attempts failed');
+          }
+          continue; // Try again
+        }
+
+        // If we get here, the request was successful
+        break;
+        
+      } catch (error: any) {
+        console.log(`Attempt ${attempt} failed:`, error.message);
+        
+        if (attempt === maxAttempts) {
+          throw error;
+        }
       }
-    });
+    }
+    
+    // Ensure we have a valid response
+    if (!axiosResponse) {
+      throw new Error('Failed to get valid response after all retry attempts');
+    }
     
     // Parse the HTML and extract complete profile data
     const profileData = parseSkillRackProfile(axiosResponse.data);
-    
-    // Validate that we got actual profile content, not a Cloudflare block page
-    if (axiosResponse.data.includes('cf-wrapper') || 
-        axiosResponse.data.includes('Cloudflare') ||
-        axiosResponse.data.includes('Sorry, you have been blocked') ||
-        axiosResponse.status === 403) {
-      throw new Error('Cloudflare protection detected - request was blocked');
-    }
     
     const response: ApiResponse = {
       success: true,
