@@ -195,12 +195,17 @@ function preprocessApiUrl(rawUrl: string): string {
   // Remove internal whitespace (spaces within the URL)
   cleanedUrl = cleanedUrl.replace(/\s+/g, '');
   
-  // Add protocol if missing
+  // Add protocol if missing (prefer HTTPS)
   if (cleanedUrl && !cleanedUrl.match(/^https?:\/\//)) {
     // Check if it starts with skillrack.com or www.skillrack.com
     if (cleanedUrl.match(/^(www\.)?skillrack\.com/)) {
       cleanedUrl = `https://${cleanedUrl}`;
     }
+  }
+  
+  // Convert HTTP to HTTPS for better compatibility
+  if (cleanedUrl.startsWith('http://')) {
+    cleanedUrl = cleanedUrl.replace('http://', 'https://');
   }
   
   // Normalize www subdomain (add if missing, SkillRack requires www)
@@ -307,21 +312,42 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
       return;
     }
     
-    // Fetch the profile page with proper User-Agent headers using the cleaned URL
+    // Fetch the profile page with enhanced headers to bypass Cloudflare protection
     const axiosResponse = await axios.get(cleanedUrl, {
       headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
-        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-        'Accept-Language': 'en-US,en;q=0.5',
-        'Accept-Encoding': 'gzip, deflate',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+        'Accept-Language': 'en-US,en;q=0.9',
+        'Accept-Encoding': 'gzip, deflate, br',
         'Connection': 'keep-alive',
-        'Upgrade-Insecure-Requests': '1'
+        'Upgrade-Insecure-Requests': '1',
+        'Sec-Fetch-Dest': 'document',
+        'Sec-Fetch-Mode': 'navigate',
+        'Sec-Fetch-Site': 'cross-site',
+        'Sec-Ch-Ua': '"Not_A Brand";v="8", "Chromium";v="120", "Google Chrome";v="120"',
+        'Sec-Ch-Ua-Mobile': '?0',
+        'Sec-Ch-Ua-Platform': '"Windows"',
+        'Cache-Control': 'max-age=0',
+        'Referrer': 'https://www.google.com/',
+        'DNT': '1'
       },
-      timeout: 10000 // 10 second timeout
+      timeout: 15000, // Increased timeout for better reliability
+      maxRedirects: 5,
+      validateStatus: function (status) {
+        return status < 500; // Accept 4xx errors to handle them gracefully
+      }
     });
     
     // Parse the HTML and extract complete profile data
     const profileData = parseSkillRackProfile(axiosResponse.data);
+    
+    // Validate that we got actual profile content, not a Cloudflare block page
+    if (axiosResponse.data.includes('cf-wrapper') || 
+        axiosResponse.data.includes('Cloudflare') ||
+        axiosResponse.data.includes('Sorry, you have been blocked') ||
+        axiosResponse.status === 403) {
+      throw new Error('Cloudflare protection detected - request was blocked');
+    }
     
     const response: ApiResponse = {
       success: true,
@@ -347,11 +373,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
         error: 'Profile not found. Please check if the URL is correct and the profile is public.',
         code: 'NOT_FOUND'
       };
-    } else if (error.response?.status === 403) {
+    } else if (error.response?.status === 403 || error.message?.includes('Cloudflare')) {
       errorResponse = {
         success: false,
-        error: 'Access denied. The profile might be private or require login.',
-        code: 'NOT_FOUND'
+        error: 'Access temporarily blocked by security protection. This is likely due to Cloudflare protection on SkillRack. Please try again later or contact support if this persists.',
+        code: 'NETWORK_ERROR'
       };
     } else if (error.code === 'ECONNABORTED') {
       errorResponse = {
